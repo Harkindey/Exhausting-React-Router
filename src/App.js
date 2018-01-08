@@ -1,40 +1,41 @@
-import React from 'react'
+import React,{ Component } from 'react';
 import {
     BrowserRouter as Router,
     Route,
     Link,
-    Switch,
-    Redirect
+    Prompt
 } from 'react-router-dom';
-import './App.css';
-const loggedIn = true;
-const Links = () => (
-    <nav>
-        <Link to="/">Home</Link>
-        <Link to="/old/123">Old</Link>
-        <Link to="/new/456">New</Link> 
-        <Link to="/protected">Protected</Link>       
-    </nav>
-)
 
-const App = () => {
-    return (
-        <Router>
+import './App.css'
+
+const Home = () => (<h1>Home</h1>)
+
+class Form extends Component {
+    state= {dirty: false}
+    setDirty = () => this.setState({dirty: true})
+    render() {
+        return (
             <div>
-                <Links />
-                    <Route exact path="/" render={() => (<h1>Home</h1>)}/>
-                    <Route exact path="/new/:str" render={({match}) => (<h1>New: {match.params.str}</h1>)}/>
-                    <Route path="/old/:str" render={({match}) => (
-                        <Redirect to={`/new/${match.params.str}`} />
-                    )} /> 
-                    <Route path="/protected" render={() => (
-                        loggedIn
-                        ?  <h1>Welcome ro the protected page</h1>
-                        :<Redirect to="/new/login" />
-                    )} /> 
+                <h1>Form</h1>
+                <input type="text" onInput={this.setDirty} />
+                <Prompt
+                    when={this.state.dirty}
+                    message="Data will be lost!"
+                />
             </div>
-        </Router>
-    )
+        )
+    }
 }
+
+const App = () => (
+    <Router>
+        <div>
+            <Link to="/">Home</Link>
+            <Link to="/form">Form</Link>
+            <Route exact path="/" component={Home} />
+            <Route path="/form" component={Form}/>
+        </div>
+    </Router>
+)
 
 export default App;
